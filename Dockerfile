@@ -6,7 +6,7 @@ MAINTAINER Daniel Hsieh <brightshine.hsieh@gmail.com>
 RUN sed -ri -e 's/^mirrorlist/#mirrorlist/g' -e 's/#baseurl=http:\/\/mirror\.centos\.org\/centos\/\$releasever/baseurl=http:\/\/vault\.centos\.org\/4\.9/g' /etc/yum.repos.d/CentOS-Base.repo
 RUN yum remove -y freetype gd ghostscript gnupg httpd httpd-manual httpd-suexec iptables net-snmp-libs nss_ldap numactl openldap pango php php-ldap php-pear samba samba-client samba-common sendmail xorg-x11-Mesa-libGL xorg-x11-font-utils xorg-x11-libs xorg-x11-xauth xorg-x11-xfs libvorbis libpng cups foomatic
 
-RUN yum update -y && yum install -y gcc4-c++.x86_64
+RUN yum update -y && yum install -y gcc4-c++.x86_64 zlib-devel.x86_64
 RUN unlink /usr/bin/cc && ln -s /usr/bin/gcc4 /usr/bin/cc && rm -f /usr/bin/c++ && ln -s /usr/bin/g++4 /usr/bin/c++
 COPY ipmi.h ipmi_msgdefs.h /usr/include/linux/
 
