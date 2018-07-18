@@ -11,12 +11,16 @@ RUN unlink /usr/bin/cc && ln -s /usr/bin/gcc4 /usr/bin/cc && rm -f /usr/bin/c++ 
 COPY ipmi.h ipmi_msgdefs.h /usr/include/linux/
 #base image done
 
-RUN cd /tmp && wget -c ftp://ftp.gnu.org/gnu/ncurses/ncurses-6.0.tar.gz && tar -zxf ncurses-6.0.tar.gz && cd ncurses-6.0 && ./configure && make -j20 && make install
+RUN cd /tmp && wget -c http://ftp.gnu.org/gnu/make/make-4.2.tar.gz && tar -zxf make-4.2.tar.gz && cd make-4.2 && ./configure && make -j12 && make install
+RUN yum remove -y make && ln -s /usr/local/bin/make /usr/bin/make
+#make 4.2
+
+RUN cd /tmp && wget -c ftp://ftp.gnu.org/gnu/ncurses/ncurses-6.1.tar.gz && tar -zxf ncurses-6.1.tar.gz && cd ncurses-6.1 && ./configure && make -j20 && make install
 RUN cd /tmp && wget -c --no-check-certificate https://cmake.org/files/v3.6/cmake-3.6.3.tar.gz && tar -zxf cmake-3.6.3.tar.gz && cd cmake-3.6.3 && export LD_LIBRARY_PATH=/usr/local/lib64 && ./bootstrap --parallel=20 && make -j20 cmake ccmake cpack ctest install/strip
-#base image with cmake 3.6.3
+#cmake 3.6.3
 
 RUN cd /tmp && wget -c ftp://ftp.yzu.edu.tw/gnu/gcc/gcc-4.8.5/gcc-4.8.5.tar.bz2 && tar -jxf gcc-4.8.5.tar.bz2 && cd gcc-4.8.5 && contrib/download_prerequisites && mkdir BUILD && cd BUILD && ../configure --enable-checking=release --enable-languages=c,c++ --disable-multilib --disable-libsantizer --disable-libcilkrts && make -j20 && make install
-#base image with cmake 3.6.3 and gcc 4.8.5
+#gcc 4.8.5
 
 RUN rm -f /usr/bin/cc /usr/bin/c++ && ln -s /usr/local/bin/gcc /usr/bin/cc && ln -s /usr/local/bin/c++ /usr/bin/c++ 
 RUN rm -rf /tmp/ncurses-6.0 /tmp/*.tar.gz /tmp/*.tar.bz && yum clean all && cd /tmp && find ./ -type f | xargs rm -rf
