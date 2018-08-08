@@ -42,20 +42,23 @@ RUN cd /tmp; \
     ./bootstrap --parallel=${NRPOC}; \
     make -j ${NRPOC} cmake ccmake cpack ctest install/strip;
 
-ENV GCC_VERSION 4.8.5
+
+ENV GCC_VERSION 5.5.0
 RUN cd /tmp; \
-    wget -q -c ftp://ftp.yzu.edu.tw/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2; \
-    tar -jxf gcc-${GCC_VERSION}.tar.bz2; \
+    wget -q -c ftp://ftp.yzu.edu.tw/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz; \
+    tar -zxf gcc-${GCC_VERSION}.tar.gz; \
     cd gcc-${GCC_VERSION}; \
     contrib/download_prerequisites; \
     mkdir BUILD; \ 
     cd BUILD; \
-    ../configure --build=x86_64-linux-gnu --enable-checking=release --enable-languages=c,c++ --disable-multilib --disable-libsantizer --disable-libcilkrts; \
+    ../configure --build=x86_64-linux-gnu --enable-checking=release --enable-languages=c,c++ --disable-multilib --disable-libsanitizer --disable-libcilkrts; 
+
+RUN cd /tmp/gcc-${GCC_VERSION}/BUILD; \
     make -j ${NRPOC}; \
     make install-strip;
 
 RUN rm -f /usr/bin/cc /usr/bin/c++ && ln -s /usr/local/bin/gcc /usr/bin/cc && ln -s /usr/local/bin/c++ /usr/bin/c++ 
-RUN rm -rf /tmp/ncurses-6.0 /tmp/*.tar.gz /tmp/*.tar.bz && yum clean all && cd /tmp && find ./ -type f | xargs rm -rf && rm -rf /tmp/gcc-${GCC_VERSION}/*
+RUN rm -rf /tmp/*.tar.gz /tmp/*.tar.bz && yum clean all && cd /tmp && find ./ -type f | xargs rm -rf && rm -rf /tmp/gcc-${GCC_VERSION}/*
 
 RUN cp -f /usr/share/zoneinfo/Asia/Taipei /etc/localtime
 
